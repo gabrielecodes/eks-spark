@@ -11,8 +11,30 @@ resource "kubernetes_service_account" "spark" {
   }
 }
 
-resource "aws_iam_role" "spark" {
-  name = "spark-workload-role"
+# Cluster role
+resource "aws_iam_role" "eks_cluster" {
+  name = "eks-node-group"
+
+  assume_role_policy = jsonencode({
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = {
+        Service = "eks.amazonaws.com"
+      }
+    }]
+    Version = "2012-10-17"
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "eks_cluster" {
+  role       = aws_iam_role.eks_cluster.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+}
+
+# Role for nodes
+resource "aws_iam_role" "nodes" {
+  name = "eks-nodes-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -31,8 +53,8 @@ resource "aws_iam_role" "spark" {
   })
 }
 
-resource "aws_iam_policy" "spark" {
-  name = "spark-workload-policy"
+resource "aws_iam_policy" "nodes_policy" {
+  name = "eks-nodes-policy"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -86,17 +108,33 @@ resource "aws_iam_policy" "spark" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "spark" {
-  role       = aws_iam_role.spark.name
-  policy_arn = aws_iam_policy.spark.arn
+resource "aws_iam_role_policy_attachment" "AmazonEKSWorkerNodePolicy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+  role       = aws_iam_role.nodes.name
 }
 
-resource "aws_eks_pod_identity_association" "spark" {
+resource "aws_iam_role_policy_attachment" "AmazonEKS_CNI_Policy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+  role       = aws_iam_role.nodes.name
+}
+
+resource "aws_iam_role_policy_attachment" "AmazonEC2ContainerRegistryReadOnly" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+  role       = aws_iam_role.nodes.name
+}
+
+resource "aws_iam_role_policy_attachment" "this" {
+  role       = aws_iam_role.nodes.name
+  policy_arn = aws_iam_policy.nodes_policy.arn
+}
+
+
+resource "aws_eks_pod_identity_association" "this" {
   cluster_name    = module.eks.cluster_name
   namespace       = "spark"
   service_account = "spark"
 
-  role_arn = aws_iam_role.spark.arn
+  role_arn = aws_iam_role.nodes.arn
 }
 
 # role for the controller to provision the ALB

@@ -5,14 +5,15 @@ module "eks" {
   name               = var.cluster-name
   kubernetes_version = var.cluster-version
 
-  vpc_id     = module.vpc.vpc_id
-  subnet_ids = module.vpc.private_subnets
+  vpc_id     = aws_vpc.main.id
+  subnet_ids = aws_subnet.private[*].id
 
-  # service_ipv4_cidr = var.cluster-service-cidr
+  iam_role_arn = aws_iam_role.eks_cluster.arn
 
   eks_managed_node_groups = {
     default = {
-      name = var.eks-nodes-group-name
+      name         = var.eks-nodes-group-name
+      iam_role_arn = aws_iam_role.nodes.arn
 
       min_size     = 2
       max_size     = 3
@@ -24,7 +25,7 @@ module "eks" {
 
       capacity_type = "ON_DEMAND"
 
-      subnet_ids = module.vpc.private_subnets
+      subnet_ids = aws_subnet.private[*].id
     }
   }
 
@@ -50,4 +51,39 @@ module "eks" {
     Environment = var.environment
     Terraform   = "True"
   }
+}
+
+resource "aws_eks_cluster" "this" {
+  name     = var.cluster-name
+  role_arn = aws_iam_role.spark.arn
+  version  = var.cluster-version
+
+  vpc_config {
+    subnet_ids = aws_subnet.private[*].id
+  }
+
+  tags = {
+    Environment = var.environment
+    Terraform   = "True"
+  }
+}
+
+resource "aws_eks_node_group" "default" {
+  cluster_name    = aws_eks_cluster.this.name
+  node_group_name = var.eks-nodes-group-name
+  node_role_arn   = aws_iam_role.spark.arn
+
+  subnet_ids = aws_subnet.private[*].id
+
+  scaling_config {
+    desired_size = 3
+    max_size     = 3
+    min_size     = 2
+  }
+
+  instance_types = [
+    "t3.small"
+  ]
+
+  capacity_type = "ON_DEMAND"
 }

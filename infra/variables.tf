@@ -24,13 +24,13 @@ variable "cluster-version" {
   default     = "1.36"
 }
 
-variable "eks-vpc-name" {
+variable "vpc-name" {
   type        = string
   description = "eks vpc name"
   default     = "eks-vpc"
 }
 
-variable "eks-vpc-cidr" {
+variable "vpc-cidr" {
   type        = string
   description = "eks vpc cidr"
   default     = "10.0.0.0/16"
@@ -72,5 +72,4 @@ variable "alb-role-name" {
 variable "spark-bucket-name" {
   type        = string
   description = "spark data s3 bucket name"
-  default     = "spark_test_datasets"
 }
