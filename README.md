@@ -4,7 +4,7 @@
 
 Kubernetes cluster running on Amazon EKS with worker nodes in private subnets. Applications are exposed through an internet-facing Application Load Balancer (ALB) managed by the AWS Load Balancer Controller. Access is protected using an identity-aware proxy. A single NAT Gateway is used to minimize infrastructure cost.
 
-```text             
+```text
                          Internet
                             |
                     Internet Gateway
@@ -19,6 +19,7 @@ Kubernetes cluster running on Amazon EKS with worker nodes in private subnets. A
               +-------------+-------------+
                             |
                      Private subnets
+                            |
               +-------------+-------------+
               |                           |
        Private Subnet A            Private Subnet B

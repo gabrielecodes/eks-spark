@@ -11,6 +11,10 @@ variable "region" {
 }
 
 # EKS
+variable "account_id" {
+  type        = string
+  description = "account id where for the eks cluster"
+}
 
 variable "cluster_name" {
   type        = string
@@ -24,6 +28,7 @@ variable "cluster_version" {
   default     = "1.36"
 }
 
+# VPC
 variable "vpc_name" {
   type        = string
   description = "eks vpc name"
@@ -61,10 +66,14 @@ variable "private_subnets_cidr_number" {
 
 # NODE GROUP
 
-variable "eks_nodes_group_name" {
-  type        = string
-  description = "name of the node group"
-  default     = "private-eks-nodes"
+variable "instance_type" {
+  type    = string
+  default = "t3.small"
+}
+
+variable "capacity_type" {
+  type    = string
+  default = "ON_DEMAND"
 }
 
 # ALB

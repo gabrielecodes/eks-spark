@@ -1,9 +1,9 @@
-resource "aws_s3_bucket" "spark" {
+resource "aws_s3_bucket" "spark_workflows" {
   bucket = var.spark_bucket_name
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "spark" {
-  bucket = aws_s3_bucket.spark.id
+  bucket = aws_s3_bucket.spark_workflows.id
 
   rule {
     apply_server_side_encryption_by_default {
@@ -16,7 +16,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "spark" {
 }
 
 resource "aws_s3_bucket_versioning" "spark" {
-  bucket = aws_s3_bucket.spark.id
+  bucket = aws_s3_bucket.spark_workflows.id
 
   versioning_configuration {
     status = "Enabled"
@@ -24,7 +24,7 @@ resource "aws_s3_bucket_versioning" "spark" {
 }
 
 resource "aws_s3_bucket_public_access_block" "spark" {
-  bucket = aws_s3_bucket.spark.id
+  bucket = aws_s3_bucket.spark_workflows.id
 
   block_public_acls       = true
   ignore_public_acls      = true
