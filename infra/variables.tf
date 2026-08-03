@@ -65,7 +65,6 @@ variable "private_subnets_cidr_number" {
 }
 
 # NODE GROUP
-
 variable "instance_type" {
   type    = string
   default = "t3.small"
@@ -77,16 +76,24 @@ variable "capacity_type" {
 }
 
 # ALB
-
 variable "alb_role_name" {
   type        = string
   description = "name for the alb role"
   default     = "eks-load-balancer-controller"
 }
 
-# SPARK
-
-variable "spark_bucket_name" {
+# S3 BUCKETS
+variable "spark_workflows_bucket_name" {
   type        = string
-  description = "spark data s3 bucket name"
+  description = "spark workflows bucket name"
+}
+
+variable "spark_event_logs_bucket_name" {
+  type        = string
+  description = "spark event logs bucket name"
+}
+
+variable "spark_data_bucket_name" {
+  type        = string
+  description = "spark source data bucket name"
 }

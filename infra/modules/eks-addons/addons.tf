@@ -14,9 +14,6 @@ resource "aws_eks_addon" "coredns" {
   resolve_conflicts_on_create = "OVERWRITE"
   resolve_conflicts_on_update = "OVERWRITE"
 
-  depends_on = [
-    aws_eks_node_group.default
-  ]
 }
 
 resource "aws_eks_addon" "kube_proxy" {
@@ -34,7 +31,4 @@ resource "aws_eks_addon" "pod_identity_agent" {
   resolve_conflicts_on_create = "OVERWRITE"
   resolve_conflicts_on_update = "OVERWRITE"
 
-  depends_on = [
-    aws_eks_node_group.default
-  ]
 }

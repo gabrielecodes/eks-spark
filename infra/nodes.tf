@@ -114,7 +114,9 @@ resource "aws_iam_policy" "spark_pods_policy" {
         ]
 
         Resource = [
-          "${aws_s3_bucket.spark_workflows.arn}/*"
+          "${module.spark_workflows_bucket.bucket_arn}/*",
+          "${module.spark_event_logs_bucket.bucket_arn}/*",
+          "${module.spark_data_bucket.bucket_arn}/*",
         ]
       },
 
