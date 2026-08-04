@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: spark-history
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: spark-history-sa
+  namespace: spark-history

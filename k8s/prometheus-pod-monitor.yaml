@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: spark-pod-monitor
+  namespace: monitoring
+spec:
+  selector:
+    matchExpressions:
+      - key: spark-role
+        operator: In
+        values: [driver, executor]
+  podMetricsEndpoints:
+    - port: spark-ui
+      path: /metrics/executors/prometheus/
+      interval: 10s

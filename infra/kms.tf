@@ -1,5 +1,5 @@
 resource "aws_kms_key" "spark" {
-  description             = "KMS key for Spark data lake"
+  description             = "KMS key for Spark buckets"
   deletion_window_in_days = 30
   enable_key_rotation     = true
 }
