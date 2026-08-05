@@ -5,6 +5,6 @@ resource "aws_kms_key" "spark" {
 }
 
 resource "aws_kms_alias" "spark" {
-  name          = "alias/spark-data"
+  name          = var.kms_key_alias
   target_key_id = aws_kms_key.spark.key_id
 }

@@ -72,7 +72,7 @@ SparkPodRole
 2. Deploy the service account for the AWS Load Balancer Controller.
 
 ```bash
-kubectl apply -f k8s/load-balancer-controller-serviceaccount.yaml
+kubectl apply -f k8s/load-balancer-controller-sa.yaml
 ```
 
 3. Obtain the vpc-id of the cluster
@@ -80,12 +80,12 @@ kubectl apply -f k8s/load-balancer-controller-serviceaccount.yaml
 ```bash
 aws eks describe-cluster \
   --name <cluster-name> \
-  --region <vpc-region> \
+  --region <region> \
   --query "cluster.resourcesVpcConfig.vpcId" \
   --output text
 ```
 
-where `<cluster-name>` and `<vpc-region>` are the cluster name and region of the cluster, see `cluster` and `region` in [the variables file](infra/variables.tf).
+where `<cluster-name>` and `<region>` are the cluster name and region of the cluster, see `cluster` and `region` in [the variables file](infra/variables.tf).
 
 4. Install the AWS Load Balancer Controller using the official Helm chart.
 
@@ -96,9 +96,9 @@ helm repo update
 helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
   -n kube-system \
   --version 3.4.2
-  --set clusterName=<cluster-name> \
-  --set region=<vpc-region> \
-  --set vpcId=<vpc-id>
+  --set clusterName=<cluster_name> \
+  --set region=<region> \
+  --set vpcId=<vpc-id> \
   --set serviceAccount.create=false \
   --set serviceAccount.name=aws-load-balancer-controller
 ```

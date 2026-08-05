@@ -83,6 +83,13 @@ variable "alb_role_name" {
 }
 
 # S3 BUCKETS
+
+variable "kms_key_alias" {
+  type        = string
+  description = "kms key alias for the spark buckets"
+  default     = "spark"
+}
+
 variable "spark_workflows_bucket_name" {
   type        = string
   description = "spark workflows bucket name"

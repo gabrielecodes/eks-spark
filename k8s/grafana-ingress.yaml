@@ -5,12 +5,9 @@ metadata:
   namespace: monitoring
   annotations:
     ingressClassName: alb
-    # Merges into the same ALB created by the Spark History Ingress
-    alb.ingress.kubernetes.io/group.name: observability-tools
-    # Load Balancer visibility
+    alb.ingress.kubernetes.io/group.name: observability-tools    
     alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/target-type: ip
-    # SSL & Listener Configuration
+    alb.ingress.kubernetes.io/target-type: ip    
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:eu-west-1:123456789012:certificate/your-acm-cert-id
     alb.ingress.kubernetes.io/ssl-redirect: "443"
