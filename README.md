@@ -79,8 +79,12 @@ helm repo update
 helm install spark-operator spark-operator/spark-operator \
   --namespace spark-operator \
   --create-namespace
+  --set spark.jobNamespaces[0]=spark-jobs
   --wait
 ```
+The operator resources are deployed in the `spark-operator` namespace while spark jobs (`SparkApplication` or `ScheduledSparkApplication`) are creaed in the namespace `spark-jobs`.
+
+You can add multiple job namespaces adding multiple `--set spark.jobNamespaces[i]=<namespace>` statements (where `i` is a progressive index).
 
 3. install the kube prometheus stack
 
