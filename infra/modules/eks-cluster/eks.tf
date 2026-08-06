@@ -1,5 +1,5 @@
 resource "aws_eks_cluster" "this" {
-  name     = var.cluster_name # TODO: change to "${var.environment}-${var.cluster_name}"
+  name     = "${var.environment}-${var.cluster_name}"
   version  = var.cluster_version
   role_arn = aws_iam_role.eks_cluster.arn
 

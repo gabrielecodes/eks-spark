@@ -1,6 +1,6 @@
 # Role for nodes
 resource "aws_iam_role" "nodes" {
-  name = "${var.cluster_name}-nodes-role" # TODO: change to "${var.environment}-${var.cluster_name}-nodes-role"
+  name = "${var.environment}-${var.cluster_name}-nodes-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
