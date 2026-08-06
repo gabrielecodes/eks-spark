@@ -1,6 +1,6 @@
 # Role for nodes
 resource "aws_iam_role" "nodes" {
-  name = "${var.cluster_name}-nodes-role"
+  name = "${var.cluster_name}-nodes-role" # TODO: change to "${var.environment}-${var.cluster_name}-nodes-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -37,7 +37,7 @@ resource "aws_iam_role_policy_attachment" "AmazonEC2ContainerRegistryReadOnly" {
 resource "aws_eks_node_group" "default" {
   cluster_name    = aws_eks_cluster.this.name
   version         = var.cluster_version
-  node_group_name = "${var.cluster_name}-spark-nodes"
+  node_group_name = "${var.environment}-${var.cluster_name}-spark-nodes"
   node_role_arn   = aws_iam_role.nodes.arn
 
   subnet_ids = var.subnet_ids
@@ -73,7 +73,7 @@ resource "aws_eks_node_group" "default" {
 
 # pod identity role
 resource "aws_iam_role" "spark_pods_role" {
-  name = "${var.cluster_name}-spark-pods-role"
+  name = "${var.environment}-${var.cluster_name}-spark-pods-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -106,7 +106,7 @@ data "aws_s3_bucket" "this" {
 }
 
 resource "aws_iam_policy" "spark_pods_policy" {
-  name = "${var.cluster_name}-spark-pods-policy"
+  name = "${var.environment}-${var.cluster_name}-spark-pods-policy"
 
   policy = jsonencode({
     Version = "2012-10-17"

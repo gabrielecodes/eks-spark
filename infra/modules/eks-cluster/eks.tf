@@ -1,5 +1,5 @@
 resource "aws_eks_cluster" "this" {
-  name     = var.cluster_name
+  name     = var.cluster_name # TODO: change to "${var.environment}-${var.cluster_name}"
   version  = var.cluster_version
   role_arn = aws_iam_role.eks_cluster.arn
 
@@ -25,7 +25,7 @@ resource "aws_eks_cluster" "this" {
 
 # Cluster role
 resource "aws_iam_role" "eks_cluster" {
-  name = "${var.environment}-${var.cluster_name}-role"
+  name = "${var.cluster_name}-role"
 
   assume_role_policy = jsonencode({
     Statement = [{

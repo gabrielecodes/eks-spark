@@ -13,11 +13,6 @@ variable "cluster_version" {
   type        = string
 }
 
-variable "cluster_role_name" {
-  description = "IAM role name for the EKS cluster"
-  type        = string
-}
-
 variable "nodes_instance_type" {
   type    = string
   default = "t3.small"

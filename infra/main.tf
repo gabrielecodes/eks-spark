@@ -20,11 +20,10 @@ module "buckets" {
 module "eks" {
   source = "./modules/eks-cluster"
 
-  environment       = var.environment
-  cluster_name      = "${var.environment}-${var.cluster_name}"
-  cluster_version   = var.cluster_version
-  cluster_role_name = "${var.environment}-${var.cluster_name}-role"
-  kms_key_alias     = var.kms_key_alias
+  environment     = var.environment
+  cluster_name    = var.cluster_name
+  cluster_version = var.cluster_version
+  kms_key_alias   = var.kms_key_alias
 
   subnet_ids = aws_subnet.private[*].id
 
