@@ -78,11 +78,10 @@ helm repo update
 
 helm install spark-operator spark-operator/spark-operator \
   --namespace spark-operator \
-  --create-namespace
-  --set spark.jobNamespaces[0]=spark-jobs
+  --set spark.jobNamespaces[0]=spark \
+  --create-namespace  \
   --wait
 ```
-The operator resources are deployed in the `spark-operator` namespace while spark jobs (`SparkApplication` or `ScheduledSparkApplication`) are creaed in the namespace `spark-jobs`.
 
 You can add multiple job namespaces adding multiple `--set spark.jobNamespaces[i]=<namespace>` statements (where `i` is a progressive index).
 
@@ -90,8 +89,8 @@ You can add multiple job namespaces adding multiple `--set spark.jobNamespaces[i
 
 ```bash
 helm install <release_name> oci://ghcr.io/prometheus-community/charts/kube-prometheus-stack \
-  --version 88.1.5 
-  --namespace monitoring
+  --version 88.1.5 \
+  --namespace monitoring \
   --create-namespace
 ```
 

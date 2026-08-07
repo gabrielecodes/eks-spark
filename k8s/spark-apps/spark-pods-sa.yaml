@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: spark-pod
+  namespace: spark
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: spark-executor-runner-role
+  namespace: spark
+rules:
+  # Manage executor pods
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs:
+      [
+        "get",
+        "list",
+        "watch",
+        "create",
+        "delete",
+        "deletecollection",
+        "patch",
+        "update",
+      ]
+  - apiGroups: [""]
+    resources: ["services", "configmaps", "persistentvolumeclaims"]
+    verbs: ["get", "list", "watch", "create", "delete", "deletecollection"]
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list", "watch", "create", "delete", "update", "patch"]
+  # Read pod logs
+  - apiGroups: [""]
+    resources: ["pods/log"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: spark-executor-runner-binding
+  namespace: spark
+subjects:
+  - kind: ServiceAccount
+    name: spark-pod
+    namespace: spark
+roleRef:
+  kind: Role
+  name: spark-executor-runner-role
+  apiGroup: rbac.authorization.k8s.io

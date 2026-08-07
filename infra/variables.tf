@@ -90,11 +90,13 @@ variable "kms_key_alias" {
   default     = "spark"
 }
 
+# Spark entrypoint files
 variable "spark_workflows_bucket_name" {
   type        = string
   description = "spark workflows bucket name"
 }
 
+# Spark logs emitted by the driver and read by the history server
 variable "spark_event_logs_bucket_name" {
   type        = string
   description = "spark event logs bucket name"
