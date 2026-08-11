@@ -26,6 +26,8 @@ resource "aws_iam_role" "spark_history_server_role" {
 
 data "aws_kms_key" "spark" {
   key_id = var.kms_key_alias
+
+  depends_on = [aws_kms_key.spark]
 }
 
 # pod identity role policy for the spark history server
@@ -77,16 +79,22 @@ resource "aws_iam_role_policy_attachment" "this" {
   policy_arn = aws_iam_policy.spark_history_server_policy.arn
 }
 
+resource "kubernetes_namespace" "spark_history" {
+  metadata {
+    name = "spark-history"
+  }
+}
+
 resource "kubernetes_service_account" "spark_history_sa" {
   metadata {
     name      = "spark-history-sa"
-    namespace = "spark-history"
+    namespace = kubernetes_namespace.spark_history.metadata[0].name
   }
 }
 
 resource "aws_eks_pod_identity_association" "spark" {
   cluster_name    = module.eks.cluster_name
-  namespace       = "spark-history"
+  namespace       = kubernetes_namespace.spark_history.metadata[0].name
   service_account = kubernetes_service_account.spark_history_sa.metadata[0].name
   role_arn        = aws_iam_role.spark_history_server_role.arn
 }

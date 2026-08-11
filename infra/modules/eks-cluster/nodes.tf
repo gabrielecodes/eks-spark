@@ -177,7 +177,7 @@ resource "aws_iam_role_policy_attachment" "pods_policy" {
 
 resource "kubernetes_namespace" "spark" {
   metadata {
-    name = "spark"
+    name = "spark-jobs"
   }
 }
 

@@ -7,8 +7,10 @@ module "buckets" {
     spark_data_bucket       = var.spark_data_bucket_name
   }
 
-  bucket_name = each.value
-  kms_key_arn = aws_kms_key.spark.arn
+  bucket_name   = each.value
+  kms_key_alias = var.kms_key_alias
+
+  depends_on = [aws_kms_key.spark]
 
   tags = {
     Terraform   = "true"

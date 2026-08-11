@@ -3,9 +3,9 @@ variable "bucket_name" {
   type        = string
 }
 
-variable "kms_key_arn" {
-  description = "KMS key ARN used for server-side encryption."
+variable "kms_key_alias" {
   type        = string
+  description = "kms key alias for the spark buckets"
 }
 
 variable "enable_versioning" {
@@ -19,3 +19,4 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
