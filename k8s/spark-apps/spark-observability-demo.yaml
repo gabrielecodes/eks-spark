@@ -1,0 +1,72 @@
+apiVersion: sparkoperator.k8s.io/v1beta2
+kind: SparkApplication
+metadata:
+  name: spark-observability-demo
+  namespace: spark-jobs
+spec:
+  type: Python
+  pythonVersion: "3"
+
+  mode: cluster
+  image: apache/spark:4.2.0
+  imagePullPolicy: IfNotPresent
+  sparkVersion: "4.2.0"
+  mainApplicationFile: "s3a://spark-workflows-demo/observability.py"
+  sparkConf:
+    spark.jars.ivy: "/tmp/.ivy2"
+    spark.jars.packages: "org.apache.hadoop:hadoop-aws:3.5.0"
+    spark.hadoop.fs.s3a.fast.upload: "true"
+    spark.hadoop.fs.s3a.impl: "org.apache.hadoop.fs.s3a.S3AFileSystem"
+
+    spark.eventLog.enabled: "true"
+    spark.eventLog.dir: "s3a://spark-event-logs-demo/"
+    spark.kubernetes.driver.log.dfsDir: "s3a://spark-event-logs-demo/logs"
+    spark.kubernetes.executor.log.dfsDir: "s3a://spark-event-logs-demo/logs"
+
+    spark.ui.acls.enable: "true"
+    spark.ui.prometheus.enabled: "true"
+
+  restartPolicy:
+    type: Never
+
+  volumes:
+    - name: spark-code
+      emptyDir: {}
+
+  driver:
+    cores: 1
+    coreLimit: "1200m"
+    memory: "512m"
+    volumeMounts:
+      - name: spark-code
+        mountPath: /opt/spark/jobs
+    labels:
+      name: spark-observability-demo
+      version: 4.2.0
+    serviceAccount: spark-pod
+
+  executor:
+    cores: 1
+    instances: 2
+    memory: "512m"
+    serviceAccount: spark-pod
+    labels:
+      version: 4.2.0
+---
+# Stable ip for Prometheus metrics
+apiVersion: v1
+kind: Service
+metadata:
+  name: spark-observability-demo-driver-metrics
+  namespace: spark-jobs
+  labels:
+    app: spark-observability-demo
+    namespace: spark-jobs
+spec:
+  selector:
+    spark-role: driver
+  ports:
+    - name: metrics
+      port: 4040
+      targetPort: 4040
+      protocol: TCP

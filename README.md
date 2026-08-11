@@ -85,6 +85,7 @@ helm repo update
 helm install <release> spark-operator/spark-operator \
   --namespace spark-operator \
   --set spark.jobNamespaces[0]=spark-jobs \
+  --create-namespace
   --wait
 ```
 
@@ -143,3 +144,11 @@ Kubernetes monitoring is provided by default dashboard available in grafana inst
 - Spark applications
 
 ### Spark Applications
+
+*Driver*:
+- restarts
+- cpu usage, request, limit
+- memory working set, request, limit
+- JVM heap used, heap committed, max
+- GC time/rate
+- off-heap memory
