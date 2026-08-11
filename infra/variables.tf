@@ -75,19 +75,11 @@ variable "capacity_type" {
   default = "ON_DEMAND"
 }
 
-# ALB
-variable "alb_role_name" {
-  type        = string
-  description = "name for the alb role"
-  default     = "eks-load-balancer-controller"
-}
+# S3 BUCKETS FOR SPARK
 
-# S3 BUCKETS
-
-variable "kms_key_alias" {
+variable "kms_key_alias_prefix" {
   type        = string
-  description = "kms key alias for the spark buckets"
-  default     = "spark"
+  description = "kms key alias prefix for the spark buckets. The full alias of the keys follow the convention <prefix>/<bucket_name>"
 }
 
 # Spark entrypoint files

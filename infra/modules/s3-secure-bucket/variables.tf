@@ -3,15 +3,15 @@ variable "bucket_name" {
   type        = string
 }
 
-variable "kms_key_alias" {
-  type        = string
-  description = "kms key alias for the spark buckets"
-}
-
 variable "enable_versioning" {
   description = "Whether to enable bucket versioning."
   type        = bool
   default     = true
+}
+
+variable "kms_key_alias_prefix" {
+  type        = string
+  description = "kms key alias prefix for the spark buckets. The full alias of the keys follow the convention <prefix>/<bucket_name>"
 }
 
 variable "tags" {

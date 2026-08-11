@@ -7,10 +7,8 @@ module "buckets" {
     spark_data_bucket       = var.spark_data_bucket_name
   }
 
-  bucket_name   = each.value
-  kms_key_alias = var.kms_key_alias
-
-  depends_on = [aws_kms_key.spark]
+  bucket_name          = each.value
+  kms_key_alias_prefix = var.kms_key_alias_prefix
 
   tags = {
     Terraform   = "true"
@@ -22,25 +20,23 @@ module "buckets" {
 module "eks" {
   source = "./modules/eks-cluster"
 
-  environment     = var.environment
-  cluster_name    = var.cluster_name
-  cluster_version = var.cluster_version
-  kms_key_alias   = var.kms_key_alias
+  environment          = var.environment
+  cluster_name         = var.cluster_name
+  cluster_version      = var.cluster_version
+  kms_key_alias_prefix = var.kms_key_alias_prefix
 
   subnet_ids = aws_subnet.private[*].id
 
   bucket_names = [
-    var.spark_workflows_bucket_name,
-    var.spark_event_logs_bucket_name,
-    var.spark_data_bucket_name
+    for bucket in module.buckets : bucket.bucket_name
   ]
+
+  depends_on = [module.buckets]
 
   tags = {
     Environment = var.environment
     Terraform   = "true"
   }
-
-  depends_on = [module.buckets]
 }
 
 module "eks_addons" {

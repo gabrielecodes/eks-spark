@@ -95,14 +95,10 @@ resource "aws_iam_role" "spark_pods_role" {
   })
 }
 
-data "aws_kms_key" "spark" {
-  key_id = var.kms_key_alias
-}
-
-data "aws_s3_bucket" "this" {
+data "aws_kms_alias" "this" {
   for_each = toset(var.bucket_names)
 
-  bucket = each.value
+  name = "${var.kms_key_alias_prefix}/${each.value}"
 }
 
 resource "aws_iam_policy" "spark_pods_policy" {
@@ -121,7 +117,8 @@ resource "aws_iam_policy" "spark_pods_policy" {
         ]
 
         Resource = [
-          for bucket in data.aws_s3_bucket.this : bucket.arn
+          for bucket_name in var.bucket_names :
+          "arn:aws:s3:::${bucket_name}"
         ]
       },
 
@@ -135,7 +132,8 @@ resource "aws_iam_policy" "spark_pods_policy" {
         ]
 
         Resource = [
-          for bucket in data.aws_s3_bucket.this : "${bucket.arn}/*"
+          for bucket_name in var.bucket_names :
+          "arn:aws:s3:::${bucket_name}/*"
         ]
       },
 
@@ -164,7 +162,9 @@ resource "aws_iam_policy" "spark_pods_policy" {
           "kms:GenerateDataKey"
         ]
 
-        Resource = data.aws_kms_key.spark.arn
+        Resource = [
+          for key in data.aws_kms_alias.this : key.target_key_arn
+        ]
       }
     ]
   })

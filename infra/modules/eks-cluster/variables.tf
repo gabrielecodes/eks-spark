@@ -27,9 +27,9 @@ variable "subnet_ids" {
   type = list(string)
 }
 
-variable "kms_key_alias" {
+variable "kms_key_alias_prefix" {
   type        = string
-  description = "kms key alias for the spark buckets"
+  description = "kms key alias prefix for the spark buckets. The full alias of the keys follow the convention <prefix>/<bucket_name>"
 }
 
 variable "bucket_names" {

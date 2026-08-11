@@ -4,16 +4,12 @@ resource "aws_s3_bucket" "this" {
   tags = var.tags
 }
 
-data "aws_kms_key" "spark" {
-  key_id = var.kms_key_alias
-}
-
 resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
   bucket = aws_s3_bucket.this.id
 
   rule {
     apply_server_side_encryption_by_default {
-      kms_master_key_id = data.aws_kms_key.spark.arn
+      kms_master_key_id = aws_kms_alias.spark.target_key_id
       sse_algorithm     = "aws:kms"
     }
 
