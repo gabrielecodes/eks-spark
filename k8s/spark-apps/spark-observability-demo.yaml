@@ -11,12 +11,18 @@ spec:
   imagePullPolicy: IfNotPresent
   sparkVersion: "4.2.0"
   mainApplicationFile: "s3a://spark-workflows-demo/observability.py"
+
   monitoring:
     exposeDriverMetrics: true
     exposeExecutorMetrics: true
+
     prometheus:
-      jmxExporterJar: "/opt/spark/jars/jmx_prometheus_javaagent-1.1.0.jar"
+      jmxExporterJar: "/jmx/jmx_prometheus_javaagent.jar"
       port: 8090
+      configuration: |
+        rules:
+          - pattern: "."
+
   sparkConf:
     spark.jars.ivy: "/tmp/.ivy2"
     spark.jars.packages: "org.apache.hadoop:hadoop-aws:3.5.0"
@@ -37,43 +43,75 @@ spec:
   volumes:
     - name: spark-code
       emptyDir: {}
+    - name: jmx-exporter
+      emptyDir: {}
 
   driver:
+    initContainers:
+      - name: download-jmx-exporter
+        image: curlimages/curl:8.15.0
+        command:
+          - sh
+          - -c
+          - |
+            curl -fL \
+              -o /jmx/jmx_prometheus_javaagent.jar \
+              https://github.com/prometheus/jmx_exporter/releases/download/1.1.0/jmx_prometheus_javaagent-1.1.0.jar
+        volumeMounts:
+          - name: jmx-exporter
+            mountPath: /jmx
+
     cores: 1
     coreLimit: "1200m"
     memory: "512m"
     volumeMounts:
       - name: spark-code
         mountPath: /opt/spark/jobs
+      - name: jmx-exporter
+        mountPath: /jmx
     labels:
       name: spark-observability-demo
       version: 4.2.0
     serviceAccount: spark-pod
-    ports:
-      - name: jmx-exporter
-        containerPort: 8090
 
   executor:
+    initContainers:
+      - name: download-jmx-exporter
+        image: curlimages/curl:8.15.0
+        command:
+          - sh
+          - -c
+          - |
+            curl -fL \
+              -o /jmx/jmx_prometheus_javaagent.jar \
+              https://github.com/prometheus/jmx_exporter/releases/download/1.1.0/jmx_prometheus_javaagent-1.1.0.jar
+        volumeMounts:
+          - name: jmx-exporter
+            mountPath: /jmx
+
     cores: 1
     instances: 2
     memory: "512m"
     serviceAccount: spark-pod
     labels:
       version: 4.2.0
+
+    volumeMounts:
+      - name: jmx-exporter
+        mountPath: /jmx
 ---
 # Monitor to scrape the metrics from the Spark driver and executor pods
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
-  name: spark-exporter
-  namespace: monitoring
+  name: spark-pod-monitor
+  namespace: spark-jobs
+  labels:
+    release: monitoring
 spec:
   selector:
-    namespaceSelector:
-      matchNames:
-        - spark-jobs
-
-    selector: {}
+    matchLabels:
+      name: spark-observability-demo
 
   podMetricsEndpoints:
     - port: jmx-exporter

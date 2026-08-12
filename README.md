@@ -147,12 +147,23 @@ Kubernetes monitoring is provided by default dashboard available in grafana inst
 - Network/disk
 - Spark applications
 
-### Spark Applications
 
-*Driver*:
-- restarts
-- cpu usage, request, limit
-- memory working set, request, limit
-- JVM heap used, heap committed, max
-- GC time/rate
-- off-heap memory
+### JVM
+
+- Heap used / max
+    - java_lang_Memory_HeapMemoryUsage_used{namespace="spark-jobs"}
+    - java_lang_Memory_HeapMemoryUsage_max{namespace="spark-jobs"}
+- Non-heap used
+    - java_lang_Memory_NonHeapMemoryUsage_max{namespace="spark-jobs"}
+    - java_lang_Memory_NonHeapMemoryUsage_used{namespace="spark-jobs"}
+- GC count
+    - increase(jvm_gc_collection_seconds_count{namespace="spark-jobs"}[5m])
+- GC time
+    - 100 * rate(jvm_gc_collection_seconds_sum{namespace="spark-jobs"}[5m])
+
+### Spark
+
+- Disk spill
+- Memory spill
+- Shuffle read/write
+- Executor/task failures

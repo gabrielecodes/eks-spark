@@ -26,6 +26,8 @@ resource "aws_iam_role" "spark_history_server_role" {
 
 data "aws_kms_key" "spark_event_logs" {
   key_id = "${var.kms_key_alias_prefix}/${var.spark_event_logs_bucket_name}"
+
+  depends_on = [module.buckets]
 }
 
 # pod identity role policy for the spark history server
