@@ -24,6 +24,10 @@ resource "aws_iam_role" "spark_history_server_role" {
   })
 }
 
+data "aws_kms_key" "spark_event_logs" {
+  key_id = "${var.kms_key_alias_prefix}/${var.spark_event_logs_bucket_name}"
+}
+
 # pod identity role policy for the spark history server
 resource "aws_iam_policy" "spark_history_server_policy" {
   name = "${var.environment}-${var.cluster_name}-spark-history-server-policy"
@@ -62,7 +66,7 @@ resource "aws_iam_policy" "spark_history_server_policy" {
           "kms:Decrypt"
         ]
 
-        Resource = "alias/spark/${var.spark_event_logs_bucket_name}"
+        Resource = [data.aws_kms_key.spark_event_logs.arn]
       }
     ]
   })

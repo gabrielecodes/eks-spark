@@ -94,10 +94,14 @@ You can add multiple job namespaces adding multiple `--set spark.jobNamespaces[i
 3. Install the kube prometheus stack
 
 ```bash
+kubectl create namespace monitoring
+
 helm install <release> oci://ghcr.io/prometheus-community/charts/kube-prometheus-stack \
   --version 88.1.5 \
   --namespace monitoring \
-  --create-namespace
+  --create-namespace \
+  --set serviceMonitorSelectorNilUsesHelmValues=false \
+  --set podMonitorSelectorNilUsesHelmValues=false
 ```
 
 4. Create the service account for the spark pods and attach permissions
