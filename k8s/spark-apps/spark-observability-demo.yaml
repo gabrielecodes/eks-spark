@@ -115,3 +115,28 @@ spec:
 
   podMetricsEndpoints:
     - port: jmx-exporter
+
+  # propagate k8s pod labels to prometheus
+  podTargetLabels:
+    - spark-app-name
+    - spark-role
+---
+# apiVersion: monitoring.coreos.com/v1
+# kind: ServiceMonitor
+# metadata:
+#   name: spark-service-monitor
+#   namespace: spark-jobs
+#   labels:
+#     release: monitoring
+# spec:
+#   namespaceSelector:
+#     matchNames:
+#       - spark-jobs
+
+#   selector:
+#     matchLabels:
+#       monitoring: spark
+
+#   endpoints:
+#     - port: jmx-exporter
+#       interval: 10s

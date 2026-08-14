@@ -85,7 +85,7 @@ helm repo update
 helm install <release> spark-operator/spark-operator \
   --namespace spark-operator \
   --set spark.jobNamespaces[0]=spark-jobs \
-  --create-namespace
+  --create-namespace \
   --wait
 ```
 
@@ -94,8 +94,6 @@ You can add multiple job namespaces adding multiple `--set spark.jobNamespaces[i
 3. Install the kube prometheus stack
 
 ```bash
-kubectl create namespace monitoring
-
 helm install <release> oci://ghcr.io/prometheus-community/charts/kube-prometheus-stack \
   --version 88.1.5 \
   --namespace monitoring \
@@ -122,7 +120,7 @@ For an overview of the spark operator [see the architecture overview](https://sp
                      │
               PromQL queries
                      │
-             ┌───────▼───────┐
+             ┌───────────────┐
              │   Prometheus  │
              └───────┬───────┘
                      │
@@ -153,8 +151,7 @@ Kubernetes monitoring is provided by default dashboard available in grafana inst
 - Heap used / max
     - java_lang_Memory_HeapMemoryUsage_used{namespace="spark-jobs"}
     - java_lang_Memory_HeapMemoryUsage_max{namespace="spark-jobs"}
-- Non-heap used
-    - java_lang_Memory_NonHeapMemoryUsage_max{namespace="spark-jobs"}
+- Non-heap used    
     - java_lang_Memory_NonHeapMemoryUsage_used{namespace="spark-jobs"}
 - GC count
     - increase(jvm_gc_collection_seconds_count{namespace="spark-jobs"}[5m])
