@@ -164,3 +164,11 @@ Kubernetes monitoring is provided by default dashboard available in grafana inst
 - Memory spill
 - Shuffle read/write
 - Executor/task failures
+
+---
+
+## TODO
+
+- test prom and new spark image
+- test delta
+- write a SparkAppliaction manifest Template

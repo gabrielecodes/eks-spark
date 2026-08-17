@@ -95,7 +95,6 @@ spec:
     serviceAccount: spark-pod
     labels:
       version: 4.2.0
-
     volumeMounts:
       - name: jmx-exporter
         mountPath: /jmx

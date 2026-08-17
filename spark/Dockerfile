@@ -3,7 +3,7 @@ FROM apache/spark:4.1.0-scala2.13-java17-ubuntu
 USER root
 
 ENV SPARK_VERSION=4.1.0
-ENV DELTA_VERSION=4.1.0
+ENV DELTA_VERSION=4.3.1
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -12,9 +12,13 @@ RUN apt-get update && \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
+RUN curl -sS -o /opt/spark/jars/jmx_prometheus_javaagent.jar \
+    https://github.com/prometheus/jmx_exporter/releases/download/1.6.0/jmx_prometheus_javaagent-1.6.0.jar 
+
 RUN curl -sS -o /opt/spark/jars/delta-spark_2.13-${DELTA_VERSION}.jar \
-    https://repo1.maven.org/maven2/io/delta/delta-spark_2.13/${DELTA_VERSION}/delta-spark_2.13-${DELTA_VERSION}.jar && \
-    curl -sS -o /opt/spark/jars/delta-storage-${DELTA_VERSION}.jar \
+    https://repo1.maven.org/maven2/io/delta/delta-spark_2.13/${DELTA_VERSION}/delta-spark_2.13-${DELTA_VERSION}.jar
+
+RUN curl -sS -o /opt/spark/jars/delta-storage-${DELTA_VERSION}.jar \
     https://repo1.maven.org/maven2/io/delta/delta-storage/${DELTA_VERSION}/delta-storage-${DELTA_VERSION}.jar
 
 RUN pip3 install --no-cache-dir \
