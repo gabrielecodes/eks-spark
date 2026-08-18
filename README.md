@@ -76,7 +76,13 @@ spark-history-server-role
 
 1. Apply the Terraform configuration to provision the EKS cluster and supporting AWS infrastructure.
 
-2. Install spark using the Spark Operator Helm chart.
+2. Create the service account for the spark pods and attach permissions
+
+```bash
+kubectl apply -f k8s/spark-apps/spark-pods-sa.yaml
+```
+
+3. Install spark using the Spark Operator Helm chart.
 
 ```bash
 helm repo add spark-operator https://kubeflow.github.io/spark-operator
@@ -91,7 +97,7 @@ helm install <release> spark-operator/spark-operator \
 
 You can add multiple job namespaces adding multiple `--set spark.jobNamespaces[i]=<namespace>` statements (where `i` is a progressive index).
 
-3. Install the kube prometheus stack
+4. Install the kube prometheus stack
 
 ```bash
 helm install <release> oci://ghcr.io/prometheus-community/charts/kube-prometheus-stack \
@@ -100,12 +106,6 @@ helm install <release> oci://ghcr.io/prometheus-community/charts/kube-prometheus
   --create-namespace \
   --set serviceMonitorSelectorNilUsesHelmValues=false \
   --set podMonitorSelectorNilUsesHelmValues=false
-```
-
-4. Create the service account for the spark pods and attach permissions
-
-```bash
-kubectl apply -f k8s/spark-apps/spark-pods-sa.yaml
 ```
 
 For an overview of the spark operator [see the architecture overview](https://spark.kubeflow.org/en/latest/overview/#architecture).
@@ -169,6 +169,7 @@ Kubernetes monitoring is provided by default dashboard available in grafana inst
 
 ## TODO
 
-- test prom and new spark image
+- test new spark image
+- test prom ebs volume
 - test delta
 - write a SparkAppliaction manifest Template

@@ -165,6 +165,20 @@ resource "aws_iam_policy" "spark_pods_policy" {
         Resource = [
           for key in data.aws_kms_alias.this : key.target_key_arn
         ]
+      },
+
+      {
+        Sid    = "ECRRead"
+        Effect = "Allow"
+
+        Action = [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage"
+        ]
+
+        Resource = "*"
       }
     ]
   })

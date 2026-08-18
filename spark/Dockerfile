@@ -13,7 +13,7 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 RUN curl -sS -o /opt/spark/jars/jmx_prometheus_javaagent.jar \
-    https://github.com/prometheus/jmx_exporter/releases/download/1.6.0/jmx_prometheus_javaagent-1.6.0.jar 
+    https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/1.0.1/jmx_prometheus_javaagent-1.0.1.jar
 
 RUN curl -sS -o /opt/spark/jars/delta-spark_2.13-${DELTA_VERSION}.jar \
     https://repo1.maven.org/maven2/io/delta/delta-spark_2.13/${DELTA_VERSION}/delta-spark_2.13-${DELTA_VERSION}.jar

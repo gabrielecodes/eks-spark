@@ -42,6 +42,7 @@ module "eks" {
 module "eks_addons" {
   source = "./modules/eks-addons"
 
+  environment  = var.environment
   cluster_name = module.eks.cluster_name
 }
 
