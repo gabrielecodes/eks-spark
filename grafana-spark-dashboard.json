@@ -1,0 +1,308 @@
+{
+    "annotations": {
+        "list": []
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 1,
+    "id": null,
+    "links": [],
+    "liveNow": false,
+    "panels": [
+        {
+            "title": "1. JVM Heap Utilization",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 0
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "custom": {
+                        "drawStyle": "line",
+                        "lineInterpolation": "smooth"
+                    },
+                    "unit": "percent",
+                    "min": 0,
+                    "max": 100,
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "orange",
+                                "value": 80
+                            },
+                            {
+                                "color": "red",
+                                "value": 90
+                            }
+                        ]
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "100 * (metrics_executor_JVM_heap_used{spark_app_name=~\"$spark_app_name\", pod=~\"$pod\"} / metrics_executor_JVM_heap_max{spark_app_name=~\"$spark_app_name\", pod=~\"$pod\"})",
+                    "legendFormat": "{{pod}} - Heap Util"
+                }
+            ]
+        },
+        {
+            "title": "2. GC Overhead Ratio",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 0
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "custom": {
+                        "drawStyle": "line",
+                        "lineInterpolation": "smooth"
+                    },
+                    "unit": "percent",
+                    "min": 0,
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "orange",
+                                "value": 10
+                            },
+                            {
+                                "color": "red",
+                                "value": 20
+                            }
+                        ]
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "100 * (rate(metrics_executor_jvmGCTime_total{spark_app_name=~\"$spark_app_name\", pod=~\"$pod\"}[5m]) / 1000) / rate(metrics_executor_executorRunTime_total{spark_app_name=~\"$spark_app_name\", pod=~\"$pod\"}[5m])",
+                    "legendFormat": "{{pod}} - GC Ratio"
+                }
+            ]
+        },
+        {
+            "title": "3. Old Gen Pool Usage",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 8
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "custom": {
+                        "drawStyle": "line",
+                        "lineInterpolation": "smooth"
+                    },
+                    "unit": "decbytes"
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "metrics_executor_JVM_pools_G1_Old_Gen_usage{spark_app_name=~\"$spark_app_name\", pod=~\"$pod\"} or metrics_executor_JVM_pools_PS_Old_Gen_usage{spark_app_name=~\"$spark_app_name\", pod=~\"$pod\"}",
+                    "legendFormat": "{{pod}} - Old Gen"
+                }
+            ]
+        },
+        {
+            "title": "4. Execution Memory Spill Rate",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 8
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "custom": {
+                        "drawStyle": "line",
+                        "lineInterpolation": "linear"
+                    },
+                    "unit": "binBps",
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 1
+                            }
+                        ]
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "rate(metrics_executor_memoryBytesSpilled_total{spark_app_name=~\"$spark_app_name\", pod=~\"$pod\"}[5m])",
+                    "legendFormat": "{{pod}} - Spill Rate"
+                }
+            ]
+        },
+        {
+            "title": "5. Storage Memory Usage (Cached Data & Broadcasts)",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 16
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "custom": {
+                        "drawStyle": "line",
+                        "lineInterpolation": "smooth"
+                    },
+                    "unit": "decbytes"
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "metrics_executor_storageMemory{spark_app_name=~\"$spark_app_name\", pod=~\"$pod\"}",
+                    "legendFormat": "{{pod}} - Storage Memory"
+                }
+            ]
+        },
+        {
+            "title": "6. Non-Heap / Off-Heap Memory Used",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 16
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "custom": {
+                        "drawStyle": "line",
+                        "lineInterpolation": "smooth"
+                    },
+                    "unit": "decbytes"
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "metrics_executor_JVM_non_heap_used{spark_app_name=~\"$spark_app_name\", pod=~\"$pod\"}",
+                    "legendFormat": "{{pod}} - Non-Heap"
+                }
+            ]
+        }
+    ],
+    "schemaVersion": 38,
+    "style": "dark",
+    "tags": [
+        "spark",
+        "kubernetes",
+        "memory"
+    ],
+    "templating": {
+        "list": [
+            {
+                "current": {
+                    "selected": true,
+                    "text": "All",
+                    "value": "$__all"
+                },
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "${DS_PROMETHEUS}"
+                },
+                "definition": "label_values(metrics_executor_JVM_heap_used, spark_app_name)",
+                "hide": 0,
+                "includeAll": true,
+                "label": "Spark Application",
+                "multi": true,
+                "name": "spark_app_name",
+                "options": [],
+                "query": {
+                    "query": "label_values(metrics_executor_JVM_heap_used, spark_app_name)",
+                    "refId": "SparkAppNameVariableQuery"
+                },
+                "refresh": 1,
+                "regex": "",
+                "skipUrlSync": false,
+                "sort": 1,
+                "type": "query"
+            },
+            {
+                "current": {
+                    "selected": true,
+                    "text": "All",
+                    "value": "$__all"
+                },
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "${DS_PROMETHEUS}"
+                },
+                "definition": "label_values(metrics_executor_JVM_heap_used{spark_app_name=~\"$spark_app_name\"}, pod)",
+                "hide": 0,
+                "includeAll": true,
+                "label": "Pod",
+                "multi": true,
+                "name": "pod",
+                "options": [],
+                "query": {
+                    "query": "label_values(metrics_executor_JVM_heap_used{spark_app_name=~\"$spark_app_name\"}, pod)",
+                    "refId": "PodVariableQuery"
+                },
+                "refresh": 1,
+                "regex": "",
+                "skipUrlSync": false,
+                "sort": 1,
+                "type": "query"
+            }
+        ]
+    },
+    "time": {
+        "from": "now-1h",
+        "to": "now"
+    },
+    "title": "Spark Application Executor Memory Metrics",
+    "uid": "spark-executor-memory"
+}

@@ -148,15 +148,14 @@ Kubernetes monitoring is provided by default dashboard available in grafana inst
 
 ### JVM
 
-- Heap used / max
-    - java_lang_Memory_HeapMemoryUsage_used{namespace="spark-jobs"}
-    - java_lang_Memory_HeapMemoryUsage_max{namespace="spark-jobs"}
-- Non-heap used    
-    - java_lang_Memory_NonHeapMemoryUsage_used{namespace="spark-jobs"}
-- GC count
-    - increase(jvm_gc_collection_seconds_count{namespace="spark-jobs"}[5m])
-- GC time
-    - 100 * rate(jvm_gc_collection_seconds_sum{namespace="spark-jobs"}[5m])
+| metric                  | definition                                         | meaning             |
+|-------------------------|----------------------------------------------------|---------------------|
+| JVM heap utilization    | 100 * metrics_executor_JVM_heap_used / metrics_executor_JVM_heap_max | JVM's memory usage  |
+| GC Overhead Ratio (%)   | 100 * (rate(metrics_executor_jvmGCTime_total[5m]) / 1000 ) / rate(metrics_executor_executorRunTime_total[5m]) | Proportion of runtime spent inside garbage collection pauses |
+| Old Gen Pool Usage      | metrics_executor_JVM_pools_G1_Old_Gen_usage or metrics_executor_JVM_pools_PS_Old_Gen_usage | Tracks long-lived memory accumulation |
+| Memory Spill Rate (Bytes/sec) | rate(metrics_executor_memoryBytesSpilled_total[5m]) | Tracks execution memory (joins/sorts/aggregations) overflowing to disk |
+| Storage Memory Usage (Bytes) | metrics_executor_storageMemory | Measures memory consumed by cached DataFrames/RDDs |
+| Off-Heap / Non-Heap Memory Used (Bytes) | metrics_executor_JVM_non_heap_used | Tracks native allocations, JVM Metaspace, and Netty network buffers outside the managed Java heap.
 
 ### Spark
 
