@@ -1,0 +1,10 @@
+prometheus:
+  prometheusSpec:
+    # Discover PodMonitors in all namespaces
+    podMonitorNamespaceSelector: {}
+
+    # Discover all PodMonitors
+    podMonitorSelector: {}
+
+    # Don't restrict PodMonitors to Helm-generated labels
+    podMonitorSelectorNilUsesHelmValues: false

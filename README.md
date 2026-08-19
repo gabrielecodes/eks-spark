@@ -100,12 +100,12 @@ You can add multiple job namespaces adding multiple `--set spark.jobNamespaces[i
 4. Install the kube prometheus stack
 
 ```bash
-helm install <release> oci://ghcr.io/prometheus-community/charts/kube-prometheus-stack \
+helm upgrade --install <release> \
+  oci://ghcr.io/prometheus-community/charts/kube-prometheus-stack \
   --version 88.1.5 \
   --namespace monitoring \
   --create-namespace \
-  --set serviceMonitorSelectorNilUsesHelmValues=false \
-  --set podMonitorSelectorNilUsesHelmValues=false
+  -f values.yaml
 ```
 
 For an overview of the spark operator [see the architecture overview](https://spark.kubeflow.org/en/latest/overview/#architecture).
@@ -159,6 +159,13 @@ Kubernetes monitoring is provided by default dashboard available in grafana inst
 
 ### Spark
 
+- Driver heap utilization
+- Driver post-GC heap
+- Executor GC time / executor run time
+- Executor shuffle read
+- Executor shuffle write
+- Executor peak execution memory / spills
+
 - Disk spill
 - Memory spill
 - Shuffle read/write
@@ -172,3 +179,20 @@ Kubernetes monitoring is provided by default dashboard available in grafana inst
 - test prom ebs volume
 - test delta
 - write a SparkAppliaction manifest Template
+
+driver metrics:
+
+- jvm_heap_used
+- jvm_heap_max
+- jvm_pools_*_used_after_gc
+- jvm_non_heap_used
+
+executor metrics:
+
+- executor_totalGCTime_seconds_total
+- executor_totalDuration_seconds_total
+- executor_totalShuffleRead_bytes_total
+- executor_totalShuffleWrite_bytes_total
+- executor_totalInputBytes_bytes_total
+- executor_failedTasks
+- executor_activeTasks
