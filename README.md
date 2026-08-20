@@ -105,7 +105,7 @@ helm upgrade --install <release> \
   --version 88.1.5 \
   --namespace monitoring \
   --create-namespace \
-  -f values.yaml
+  -f ./prometheus/values.yaml
 ```
 
 For an overview of the spark operator [see the architecture overview](https://spark.kubeflow.org/en/latest/overview/#architecture).

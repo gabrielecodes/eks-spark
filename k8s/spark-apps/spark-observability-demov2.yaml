@@ -75,6 +75,10 @@ spec:
       path: /metrics/prometheus
       interval: 15s
 
+    - port: spark-metrics
+      path: /metrics/executors/prometheus
+      interval: 15s
+
   # propagate k8s pod labels to prometheus
   podTargetLabels:
     - spark-app-name
